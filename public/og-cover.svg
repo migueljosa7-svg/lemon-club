@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Lemon Club Zaragoza">
+  <rect width="1200" height="630" fill="#0b0b0b"/>
+  <circle cx="980" cy="120" r="260" fill="#e2ff00" opacity="0.18"/>
+  <circle cx="140" cy="560" r="240" fill="#9bffd6" opacity="0.16"/>
+  <g fill="#e2ff00">
+    <circle cx="600" cy="235" r="120"/>
+    <circle cx="600" cy="235" r="86" fill="#fffbe8"/>
+    <g stroke="#e2ff00" stroke-width="14" stroke-linecap="round">
+      <path d="M600 149v172M514 235h172M539 174l122 122M661 174L539 296"/>
+    </g>
+  </g>
+  <text x="600" y="430" text-anchor="middle" font-family="Anton, Arial Black, sans-serif" font-size="86" fill="#fffbe8" letter-spacing="2">LEMON CLUB ZARAGOZA</text>
+  <text x="600" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#e2ff00">Planes diferentes · talleres · conocer gente</text>
+  <text x="600" y="555" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#fffbe8" opacity="0.7">Zaragoza, Aragón · España</text>
+</svg>

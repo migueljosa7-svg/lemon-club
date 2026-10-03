@@ -5,6 +5,16 @@ import { AtSign, Camera, Check, Mail, MapPin, Send } from "lucide-react";
 import { Reveal } from "./motion/Reveal";
 import Confetti from "./ui/Confetti";
 import { scrollToId } from "../lib/utils";
+import { openLegal } from "../lib/legalEvents";
+import type { LegalId } from "../data/legal";
+
+const LEGAL_LINKS: Array<{ id: LegalId; label: string }> = [
+  { id: "aviso", label: "Aviso legal" },
+  { id: "privacidad", label: "Política de privacidad" },
+  { id: "cookies", label: "Política de cookies" },
+  { id: "reservas", label: "Condiciones de reserva" },
+  { id: "creditos", label: "Créditos fotográficos" },
+];
 
 const SEO_LINKS = [
   { label: "Planes diferentes en Zaragoza", id: "talleres" },
@@ -45,7 +55,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden bg-ink text-cream">
+    <footer className="grain relative overflow-hidden bg-ink text-cream">
       <Confetti trigger={burst} />
       <div className="pointer-events-none absolute inset-0 pattern-dots-dark opacity-40" />
 
@@ -136,7 +146,7 @@ export default function Footer() {
         {/* Marca */}
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="grid h-10 w-10 place-items-center rounded-xl border-2 border-lemon bg-lemon text-ink">
+            <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-xl border-2 border-lemon bg-lemon text-ink">
               🍋
             </span>
             <span className="heading-display text-xl">
@@ -204,15 +214,13 @@ export default function Footer() {
         <nav aria-label="Información legal" id="legal">
           <h3 className="eyebrow text-lemon">Legal</h3>
           <ul className="mt-4 space-y-2.5 text-sm text-cream/60">
-            {["Aviso legal", "Política de privacidad", "Política de cookies", "Condiciones de reserva"].map(
-              (t) => (
-                <li key={t}>
-                  <a href="#legal" className="transition hover:text-lemon">
-                    {t}
-                  </a>
-                </li>
-              )
-            )}
+            {LEGAL_LINKS.map((l) => (
+              <li key={l.id}>
+                <button onClick={() => openLegal(l.id)} className="text-left transition hover:text-lemon">
+                  {l.label}
+                </button>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>
@@ -231,21 +239,24 @@ export default function Footer() {
 
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-7 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <p>
-            © {new Date().getFullYear()} Lemon Club Zaragoza. Todos los derechos reservados. Hecho con
-            🍋 en Zaragoza.
+            © {new Date().getFullYear()} Lemon Club Zaragoza. Todos los derechos reservados. Hecho con{" "}
+            <span aria-hidden="true">🍋</span> en Zaragoza.
           </p>
           <p className="flex flex-wrap gap-x-4 gap-y-1">
-            <a href="#legal" className="transition hover:text-lemon">
+            <button onClick={() => openLegal("aviso")} className="transition hover:text-lemon">
               Aviso legal
-            </a>
-            <a href="#legal" className="transition hover:text-lemon">
+            </button>
+            <button onClick={() => openLegal("privacidad")} className="transition hover:text-lemon">
               Privacidad
-            </a>
-            <a href="#legal" className="transition hover:text-lemon">
+            </button>
+            <button onClick={() => openLegal("cookies")} className="transition hover:text-lemon">
               Cookies
-            </a>
+            </button>
+            <button onClick={() => openLegal("creditos")} className="transition hover:text-lemon">
+              Créditos fotográficos
+            </button>
             <button onClick={() => scrollToId("inicio")} className="transition hover:text-lemon">
-              Volver arriba ↑
+              Volver arriba <span aria-hidden="true">↑</span>
             </button>
           </p>
         </div>

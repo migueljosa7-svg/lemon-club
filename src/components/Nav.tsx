@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Citrus, Wallet } from "lucide-react";
 import { cn, formatCoins, scrollToId } from "../lib/utils";
 import { useLemonProfile } from "../lib/lemonStore";
-import AccountModal from "./AccountModal";
+
+const AccountModal = lazy(() => import("./AccountModal"));
+
 
 const LINKS = [
   { id: "que-es", label: "Qué es" },
@@ -35,7 +37,14 @@ export default function Nav() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-[90] px-3 pt-3 sm:px-5 sm:pt-4">
+      <a
+        href="#contenido-principal"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-lemon focus:px-4 focus:py-2 focus:font-bold focus:text-ink"
+      >
+        Saltar al contenido principal
+      </a>
       <nav
+        aria-label="Navegacion principal"
         className={cn(
           "mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-full px-4 py-2.5 transition-all duration-300 sm:px-6",
           scrolled
@@ -84,6 +93,9 @@ export default function Nav() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setAccountOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={accountOpen}
+            aria-controls="lemon-account-dialog"
             className={cn(
               "hidden items-center gap-2 rounded-full border-2 px-4 py-2.5 text-sm font-bold transition sm:inline-flex",
               onDark
@@ -96,7 +108,7 @@ export default function Nav() {
             Mi cuenta
             {coins > 0 && (
               <span className="rounded-full bg-ink px-2 py-0.5 text-xs font-bold text-lemon">
-                {formatCoins(coins)} 🍋
+                {formatCoins(coins)} <span aria-hidden="true">🍋</span>
               </span>
             )}
           </button>
@@ -109,6 +121,7 @@ export default function Nav() {
           <button
             onClick={() => setOpen((v) => !v)}
             className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-cream text-ink lg:hidden"
+            aria-controls="menu-movil"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={open}
           >
@@ -121,6 +134,7 @@ export default function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="menu-movil"
             initial={{ opacity: 0, y: -14 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -14 }}
@@ -147,17 +161,21 @@ export default function Nav() {
               }}
               className="btn btn-ink mt-2 w-full"
             >
-              <Wallet className="h-4 w-4" /> Mi cuenta
-              {coins > 0 && <span>· {formatCoins(coins)} 🍋</span>}
+              <Wallet className="h-4 w-4" aria-hidden="true" /> Mi cuenta
+              {coins > 0 && (
+                <span>
+                  · {formatCoins(coins)} <span aria-hidden="true">🍋</span>
+                </span>
+              )}
             </button>
             <button onClick={() => go("talleres")} className="btn btn-lemon mt-2 w-full">
-              🍋 Reservar plaza
+              <span aria-hidden="true">🍋</span> Reservar plaza
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} />
+      <Suspense fallback={null}><AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} /></Suspense>
     </header>
   );
 }

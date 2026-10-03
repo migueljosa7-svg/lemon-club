@@ -37,7 +37,7 @@ export default function Testimonials() {
   return (
     <section
       id="historias"
-      className="relative scroll-mt-24 overflow-hidden bg-cream-deep py-24 sm:py-32"
+      className="grain relative scroll-mt-24 overflow-hidden bg-cream-deep py-24 sm:py-32"
     >
       <div className="pointer-events-none absolute inset-0 pattern-dots opacity-60" />
       <div className="pointer-events-none absolute -left-24 bottom-10 h-80 w-80 rounded-full bg-mint/50 blur-[110px]" />

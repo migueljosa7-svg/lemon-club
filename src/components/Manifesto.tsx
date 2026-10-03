@@ -49,7 +49,7 @@ const STEPS = [
 
 export default function Manifesto() {
   return (
-    <section id="que-es" className="relative overflow-hidden bg-cream py-24 sm:py-32">
+    <section id="que-es" className="grain relative overflow-hidden bg-cream py-24 sm:py-32">
       <div className="pointer-events-none absolute inset-0 pattern-dots opacity-60" />
       <div className="pointer-events-none absolute -right-24 top-1/3 h-72 w-72 rounded-full bg-lemon/40 blur-[100px]" />
 
@@ -64,13 +64,20 @@ export default function Manifesto() {
           <Reveal delay={0.08}>
             <h2 className="heading-display mt-6 text-[clamp(2.4rem,6vw,5rem)] text-ink">
               El manifiesto
-              <span className="block font-serif italic normal-case text-ink/45">sin timidez</span>
+              <span className="block font-serif italic normal-case text-ink/45">
+                sin timidez, de miércoles
+              </span>
             </h2>
           </Reveal>
           <Reveal delay={0.14}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink/70">
               Somos la comunidad de Zaragoza para quien quiere planes distintos, gente nueva y cero
-              drama. Aquí nadie llega con el grupo hecho:{" "}
+              drama.{" "}
+              <em className="font-serif text-ink">
+                Ideal si acabas de separarte, si eres nueva en la ciudad o si tu grupo de siempre ya
+                no sale los miércoles.
+              </em>{" "}
+              Aquí nadie llega con el grupo hecho:{" "}
               <strong className="text-ink">se hace en el sitio.</strong>
             </p>
           </Reveal>
@@ -84,7 +91,7 @@ export default function Manifesto() {
                 className={`group relative h-full overflow-hidden rounded-[2rem] border-2 border-ink p-7 transition-all duration-300 hover:-translate-y-2 hover:shadow-hard ${p.accent}`}
               >
                 <div className="flex items-start justify-between">
-                  <span className="grid h-14 w-14 place-items-center rounded-2xl border-2 border-ink bg-cream text-2xl transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110">
+                  <span aria-hidden="true" className="grid h-14 w-14 place-items-center rounded-2xl border-2 border-ink bg-cream text-2xl transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110">
                     {p.emoji}
                   </span>
                   <p.icon
@@ -94,7 +101,7 @@ export default function Manifesto() {
                 </div>
                 <h3 className="heading-display mt-6 text-2xl text-ink">{p.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-ink/75">{p.text}</p>
-                <span className="absolute -bottom-6 -right-4 text-8xl opacity-10 transition-transform duration-500 group-hover:-rotate-12">
+                <span aria-hidden="true" className="absolute -bottom-6 -right-4 text-8xl opacity-10 transition-transform duration-500 group-hover:-rotate-12">
                   🍋
                 </span>
               </article>

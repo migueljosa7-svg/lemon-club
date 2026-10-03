@@ -61,6 +61,7 @@ export default function Faq() {
                   <button
                     onClick={() => setOpen(isOpen ? null : i)}
                     aria-expanded={isOpen}
+                    aria-controls={`faq-panel-${i}`}
                     className="flex w-full items-start justify-between gap-4 px-6 py-5 text-left"
                   >
                     <span className="flex items-start gap-3">
@@ -84,6 +85,9 @@ export default function Faq() {
                     {isOpen && (
                       <motion.div
                         key="content"
+                        id={`faq-panel-${i}`}
+                        role="region"
+                        aria-label={f.q}
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}

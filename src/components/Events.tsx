@@ -1,16 +1,28 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, Suspense, lazy, useCallback, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Calendar, MapPin, Timer } from "lucide-react";
 import { CATEGORIES, EVENTS } from "../data/events";
 import type { Category, LemonEvent } from "../data/events";
 import { Reveal } from "./motion/Reveal";
-import EventModal from "./event-modal/EventModal";
 import Atmosphere from "./ui/Atmosphere";
-import AccountModal from "./AccountModal";
 import Tilt from "./ui/Tilt";
 import { setAtmo } from "../lib/atmo";
 import type { AtmoTone } from "../lib/atmo";
 import { cn } from "../lib/utils";
+
+const EventModal = lazy(() => import("./event-modal/EventModal"));
+const AccountModal = lazy(() => import("./AccountModal"));
+
+function ModalSkeleton() {
+  return (
+    <div
+      aria-hidden="true"
+      className="fixed inset-0 z-[110] grid place-items-center bg-ink/40 backdrop-blur-sm"
+    >
+      <div className="h-64 w-full max-w-xl animate-pulse rounded-[2rem] border-2 border-ink bg-cream shadow-hard" />
+    </div>
+  );
+}
 
 function spanClass(index: number) {
   return index === 0 ? "sm:col-span-2 lg:col-span-2 lg:row-span-2" : "";
@@ -176,7 +188,7 @@ export default function Events() {
   );
 
   return (
-    <section id="talleres" className="relative scroll-mt-24 overflow-hidden bg-ink py-24 text-cream sm:py-32">
+    <section id="talleres" className="grain relative scroll-mt-24 overflow-hidden bg-ink py-24 text-cream sm:py-32">
       <div className="pointer-events-none absolute inset-0 pattern-dots-dark opacity-40" />
       <div className="pointer-events-none absolute -left-32 top-40 h-96 w-96 rounded-full bg-lemon/15 blur-[130px]" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-mint/15 blur-[130px]" />
@@ -200,8 +212,12 @@ export default function Events() {
             </Reveal>
             <Reveal delay={0.14}>
               <p className="mt-5 max-w-lg text-cream/70">
-                Talleres de fin de semana en Zaragoza con plazas limitadas. Elige tema, reserva y ven
-                solo/a: el resto lo hacemos nosotros.
+                Talleres los miércoles en Zaragoza con plazas limitadas. Elige tema, reserva y ven
+                solo/a: el resto lo hacemos nosotros.{" "}
+                <span className="font-serif italic text-cream">
+                  Un refugio para reconectar tras una etapa de cambio, hacer amigas y ampliar tu
+                  círculo sin la presión de las apps de citas.
+                </span>
               </p>
             </Reveal>
           </div>
@@ -257,8 +273,8 @@ export default function Events() {
 
         <Reveal delay={0.1}>
           <p className="mt-8 text-center text-sm text-cream/55">
-            ¿No encuentras tu plan? Cada semana abrimos talleres nuevos en Zaragoza centro, El Gancho,
-            Depósito y La Paz.{" "}
+            ¿No encuentras tu plan? Cada miércoles abrimos talleres nuevos en Zaragoza centro, El
+            Gancho, Depósito y La Paz; y los domingos, el Antidomingo.{" "}
             <button
               onClick={() => document.getElementById("newsletter")?.scrollIntoView({ behavior: "smooth" })}
               className="font-bold text-lemon underline decoration-dotted underline-offset-4 hover:text-mint"
@@ -270,15 +286,19 @@ export default function Events() {
         </Reveal>
       </div>
 
-      <EventModal
-        event={active}
-        onClose={() => setActive(null)}
-        onAccount={() => {
-          setActive(null);
-          setAccountOpen(true);
-        }}
-      />
-      <AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} />
+      <Suspense fallback={active ? <ModalSkeleton /> : null}>
+        <EventModal
+          event={active}
+          onClose={() => setActive(null)}
+          onAccount={() => {
+            setActive(null);
+            setAccountOpen(true);
+          }}
+        />
+      </Suspense>
+      <Suspense fallback={accountOpen ? <ModalSkeleton /> : null}>
+        <AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} />
+      </Suspense>
       <Atmosphere />
     </section>
   );

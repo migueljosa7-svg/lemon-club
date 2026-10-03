@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpenText, Calendar, Check, Clock, MapPin, Star, Ticket, Users, X, UtensilsCrossed } from "lucide-react";
 import type { LemonEvent } from "../../data/events";
 import { galleryFor } from "../../data/galleries";
 import { addAttendance } from "../../lib/lemonStore";
+import { useFocusTrap } from "../../lib/useFocusTrap";
 import Confetti from "../ui/Confetti";
-import GalleryLoop from "./GalleryLoop";
+
+const GalleryLoop = lazy(() => import("./GalleryLoop"));
 
 interface Props {
   event: LemonEvent | null;
@@ -23,20 +25,17 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
     setReserved(false);
   }, [event?.id]);
 
-  // Bloqueo de scroll + cierre con Escape
+  const panelRef = useFocusTrap(Boolean(event), onClose);
+
+  // Bloqueo de scroll
   useEffect(() => {
     if (!event) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
     };
-  }, [event, onClose]);
+  }, [event]);
 
   const reserve = () => {
     if (!event || reserved) return;
@@ -68,6 +67,8 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
 
                 {/* Panel: Carta / Menú desplegable */}
                 <motion.div
+                  ref={panelRef}
+                  tabIndex={-1}
                   role="dialog"
                   aria-modal="true"
                   aria-label={`${event.title}, carta de la experiencia`}
@@ -90,7 +91,7 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
                       <X className="h-5 w-5" />
                     </button>
                     <div className="relative flex items-end gap-4">
-                      <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border-2 border-ink bg-cream text-3xl shadow-hard">
+                      <span aria-hidden="true" className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border-2 border-ink bg-cream text-3xl shadow-hard">
                         {event.emoji}
                       </span>
                       <div>
@@ -127,7 +128,16 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
                     </p>
 
                     {/* Galería en bucle de eventos pasados */}
-                    <GalleryLoop eventId={event.id} title={event.title} />
+                    <Suspense
+                      fallback={
+                        <div
+                          aria-hidden="true"
+                          className="h-52 w-full animate-pulse rounded-3xl border-2 border-dashed border-ink/25 bg-white/60"
+                        />
+                      }
+                    >
+                      <GalleryLoop eventId={event.id} title={event.title} />
+                    </Suspense>
 
                     {/* Menú / programa */}
                     <section aria-label={`Programa de ${event.title}`}>
@@ -216,8 +226,8 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
                         className="rounded-2xl border-2 border-dashed border-ink/30 bg-mint/50 p-4 text-center"
                       >
                         <p className="text-sm font-semibold text-ink">
-                          🍋 Simulación: te hemos preapuntado. <strong>+10 LemonCoins</strong>{" "}
-                          acreditadas en tu cuenta.
+                          <span aria-hidden="true">🍋</span> Simulación: te hemos preapuntado.{" "}
+                          <strong>+10 LemonCoins</strong> acreditadas en tu cuenta.
                         </p>
                         <button
                           onClick={onAccount}

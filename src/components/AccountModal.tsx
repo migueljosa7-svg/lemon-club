@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Calendar, Check, Coins, History, IdCard, Pencil, QrCode, X } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
 import { backendLabel, renameMember, useLemonProfile } from "../lib/lemonStore";
 import { formatCoins } from "../lib/utils";
+import { useFocusTrap } from "../lib/useFocusTrap";
+
+const QRCodeSVG = lazy(() => import("qrcode.react").then((m) => ({ default: m.QRCodeSVG })));
 
 interface Props {
   open: boolean;
@@ -17,19 +19,16 @@ export default function AccountModal({ open, onClose }: Props) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
 
+  const panelRef = useFocusTrap(open, onClose);
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
     };
-  }, [open, onClose]);
+  }, [open]);
 
   useEffect(() => {
     if (open && profile) setName(profile.name);
@@ -62,6 +61,9 @@ export default function AccountModal({ open, onClose }: Props) {
                   aria-hidden="true"
                 />
                 <motion.div
+                  ref={panelRef}
+                  id="lemon-account-dialog"
+                  tabIndex={-1}
                   role="dialog"
                   aria-modal="true"
                   aria-label="Mi Lemon Account"
@@ -143,17 +145,34 @@ export default function AccountModal({ open, onClose }: Props) {
                         </p>
                       </div>
                       <div className="flex flex-col items-center gap-2 rounded-2xl border-2 border-ink bg-white p-4">
-                        <QRCodeSVG
-                          value={`https://lemonclub.es/u/${profile.memberCode}`}
-                          size={132}
-                          level="M"
-                          bgColor="#ffffff"
-                          fgColor="#0b0b0b"
-                          aria-label={`Código QR del miembro ${profile.memberCode}`}
-                        />
+                        <Suspense
+                          fallback={
+                            <span
+                              aria-hidden="true"
+                              className="grid h-[132px] w-[132px] animate-pulse place-items-center rounded-xl bg-ink/10"
+                            >
+                              <QrCode className="h-8 w-8 text-ink/40" />
+                            </span>
+                          }
+                        >
+                          <QRCodeSVG
+                            value={`https://lemon-club.onrender.com/#/socio/${profile.memberCode}`}
+                            size={132}
+                            level="M"
+                            bgColor="#ffffff"
+                            fgColor="#0b0b0b"
+                            aria-label={`Código QR del miembro ${profile.memberCode}. Abre el carnet de socio Lemon VIP`}
+                          />
+                        </Suspense>
                         <span className="inline-flex items-center gap-1 text-[0.7rem] font-bold text-ink/60">
-                          <QrCode className="h-3.5 w-3.5" /> Enséñalo en el evento
+                          <QrCode className="h-3.5 w-3.5" aria-hidden="true" /> Enséñalo en el evento
                         </span>
+                        <a
+                          href={`#/socio/${profile.memberCode}`}
+                          className="text-center text-[0.7rem] font-bold text-ink underline decoration-dotted underline-offset-4 hover:text-ink/70"
+                        >
+                          Ver mi Carnet de Socio Lemon VIP
+                        </a>
                       </div>
                     </div>
 
@@ -165,7 +184,7 @@ export default function AccountModal({ open, onClose }: Props) {
                       {profile.attendance.length === 0 ? (
                         <p className="mt-3 rounded-2xl border-2 border-dashed border-ink/25 bg-white/60 p-5 text-sm text-ink/65">
                           Aún no hay asistencias registradas. Reserva tu primer taller y aquí
-                          aparecerán tus +10 🍋 por evento.
+                          aparecerán tus +10 <span aria-hidden="true">🍋</span> por evento.
                         </p>
                       ) : (
                         <ol className="mt-3 space-y-2">

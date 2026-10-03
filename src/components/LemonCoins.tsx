@@ -74,7 +74,7 @@ export default function LemonCoins() {
       <Confetti trigger={burst} />
       <div className="pointer-events-none absolute inset-0 pattern-dots opacity-70" />
       <div className="pointer-events-none absolute -right-20 -top-24 h-96 w-96 rounded-full bg-sun blur-[110px]" />
-      <span className="pointer-events-none absolute left-6 top-16 hidden text-7xl float-slow md:block">🍋</span>
+      <span className="pointer-events-none absolute left-6 top-16 hidden text-7xl float-slow md:block" aria-hidden="true">🍋</span>
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
         {/* Encabezado */}
@@ -88,7 +88,7 @@ export default function LemonCoins() {
             <Reveal delay={0.08}>
               <h2 className="heading-display mt-6 text-[clamp(2.6rem,7vw,5.5rem)]">
                 LemonCoins
-                <span className="ml-3 inline-block">🍋</span>
+                <span aria-hidden="true" className="ml-3 inline-block">🍋</span>
                 <span className="block font-serif italic normal-case text-ink/50">
                   planear también puntúa
                 </span>
@@ -127,7 +127,7 @@ export default function LemonCoins() {
                     </li>
                   ))}
                 </ul>
-                <span className="absolute -bottom-7 -right-5 text-8xl opacity-10 transition-transform duration-500 group-hover:-rotate-12">
+                <span aria-hidden="true" className="absolute -bottom-7 -right-5 text-8xl opacity-10 transition-transform duration-500 group-hover:-rotate-12">
                   🍋
                 </span>
               </article>
@@ -275,7 +275,7 @@ export default function LemonCoins() {
                   onClick={() => setBurst((b) => b + 1)}
                   className="btn btn-ink mt-5 w-full !py-3 text-sm"
                 >
-                  🎉 Reclamar con confeti
+                  <span aria-hidden="true">🎉</span> Reclamar con confeti
                 </button>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function LemonCoins() {
             {/* Franja legal / tono */}
             <div className="border-t-2 border-cream/10 bg-ink-soft px-6 py-4 text-center text-xs leading-relaxed text-cream/55 sm:px-9">
               Las LemonCoins se acreditan al confirmar la asistencia y caducan a los 12 meses. No son
-              dinero real, pero compran risas, tazas y talleres. 🍋
+              dinero real, pero compran risas, tazas y talleres. <span aria-hidden="true">🍋</span>
             </div>
           </div>
         </Reveal>

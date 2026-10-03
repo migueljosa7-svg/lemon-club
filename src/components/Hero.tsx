@@ -77,14 +77,14 @@ export default function Hero() {
   return (
     <section
       id="inicio"
-      className="relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden bg-ink pt-28 text-cream sm:pt-32"
+      className="grain relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden bg-ink pt-28 text-cream sm:pt-32"
     >
       {/* Fondos: glow lima + menta y trama de puntos */}
       <div className="pointer-events-none absolute inset-0 -z-10 pattern-dots-dark opacity-50" />
       <div className="pointer-events-none absolute -left-40 -top-40 -z-10 h-[34rem] w-[34rem] rounded-full bg-lemon/25 blur-[130px]" />
       <div className="pointer-events-none absolute -bottom-56 -right-32 -z-10 h-[36rem] w-[36rem] rounded-full bg-mint/20 blur-[140px]" />
       <div className="pointer-events-none absolute right-[7%] top-28 -z-10 hidden h-32 w-32 rounded-full border-2 border-dashed border-lemon/50 spin-slow lg:block" />
-      <span className="pointer-events-none absolute right-[14%] top-44 -z-10 hidden text-7xl float-slow lg:block">
+      <span className="pointer-events-none absolute right-[14%] top-44 -z-10 hidden text-7xl float-slow lg:block" aria-hidden="true">
         🍋
       </span>
 
@@ -99,7 +99,7 @@ export default function Hero() {
               className="mb-6 inline-flex items-center gap-2 rounded-full border border-lemon/40 bg-lemon/10 px-4 py-1.5 text-xs font-semibold text-lemon backdrop-blur"
             >
               <span className="h-2 w-2 animate-pulse rounded-full bg-lemon" />
-              Comunidad antitimidez en Zaragoza · plazas abiertas
+              Miércoles de desconexión en Zaragoza · plazas abiertas
             </motion.div>
 
             <h1 className="heading-display text-[clamp(2.7rem,8.6vw,6.6rem)]">
@@ -140,8 +140,11 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.55 }}
               className="mt-7 max-w-xl text-base leading-relaxed text-cream/75 sm:text-lg"
             >
-              Planes, talleres y encuentros para gente con ganas de conectar, romper el hielo y salir de
-              la rutina. <span className="text-cream">Ven solo/a o acompañado/a.</span>
+              Cortamos los miércoles la rutina.{" "}
+              <span className="font-serif italic text-lemon">Hacemos tribu.</span>{" "}
+              <span className="text-cream">Tu nuevo grupo de amigos en Zaragoza</span> te espera a
+              mitad de semana.{" "}
+              <span className="text-cream">Ven solo/a o acompañado/a.</span>
             </motion.p>
 
             <motion.div
@@ -151,7 +154,7 @@ export default function Hero() {
               className="mt-9 flex flex-wrap items-center gap-4"
             >
               <button onClick={() => scrollToId("talleres")} className="btn btn-lemon">
-                🍋 Ver próximos talleres
+                <span aria-hidden="true">🍋</span> Ver próximos talleres
                 <ArrowDown className="h-4 w-4" strokeWidth={2.6} />
               </button>
               <button onClick={() => scrollToId("como-funciona")} className="btn btn-ghost text-cream">
@@ -183,7 +186,13 @@ export default function Hero() {
                       key={t}
                       className="rounded-full border border-ink/20 bg-lemon px-3 py-1 text-xs font-bold"
                     >
-                      {t}
+                      {t.includes("🍋") ? (
+                        <>
+                          +10 <span aria-hidden="true">🍋</span>
+                        </>
+                      ) : (
+                        t
+                      )}
                     </span>
                   ))}
                 </div>
@@ -227,11 +236,11 @@ export default function Hero() {
           {[0, 1].map((half) => (
             <div key={half} className="flex shrink-0 items-center gap-8 pr-8" aria-hidden={half === 1}>
               {[
-                "Talleres de fin de semana",
-                "Conocer gente en Zaragoza",
+                "Miércoles de desconexión",
+                "Talleres en Zaragoza",
+                "Conocer gente sin timidez",
                 "Catas a ciegas",
-                "Brunchs del domingo",
-                "Cero timidez",
+                "El Antidomingo",
                 "Paint & wine",
               ].map((t, i) => (
                 <span key={i} className="heading-display flex items-center gap-4 text-lg sm:text-xl">
