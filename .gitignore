@@ -1,0 +1,7 @@
+node_modules
+dist
+.smoke
+preview.log
+preview.err
+*.local
+.DS_Store

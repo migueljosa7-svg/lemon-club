@@ -1,0 +1,295 @@
+@import "tailwindcss";
+
+/* ============================================================
+   LEMON CLUB ZARAGOZA — DESIGN TOKENS (Tailwind CSS v4)
+   ============================================================ */
+@theme {
+  --color-lemon: #e2ff00;
+  --color-sun: #ffe600;
+  --color-mint: #9bffd6;
+  --color-mint-deep: #4fe0b0;
+  --color-cream: #fffbe8;
+  --color-cream-deep: #f7f0d2;
+  --color-ink: #0b0b0b;
+  --color-ink-soft: #161616;
+  --color-ink-line: #2a2a2a;
+  --color-blush: #ff8fa8;
+
+  --font-display: "Anton", "Arial Narrow", Impact, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-lemon);
+    color: var(--color-ink);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-lemon);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ============================================================
+   UTILIDADES PERSONALIZADAS
+   ============================================================ */
+.heading-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.88;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.7rem;
+}
+
+/* Botón principal con glow amarillo lima */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.95rem 1.75rem;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
+  will-change: transform;
+}
+.btn:hover {
+  transform: translateY(-3px);
+}
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-lemon {
+  background: var(--color-lemon);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 0 6px 0 0 var(--color-ink);
+}
+.btn-lemon:hover {
+  box-shadow:
+    0 9px 0 0 var(--color-ink),
+    0 0 42px 2px rgba(226, 255, 0, 0.75);
+}
+
+.btn-ink {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  border: 2px solid var(--color-ink);
+  box-shadow: 0 6px 0 0 rgba(11, 11, 11, 0.25);
+}
+.btn-ink:hover {
+  box-shadow:
+    0 9px 0 0 rgba(11, 11, 11, 0.25),
+    0 0 42px 2px rgba(226, 255, 0, 0.6);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: currentColor;
+  border: 2px solid currentColor;
+}
+
+/* Marquee infinito */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 34s linear infinite;
+}
+.marquee-fast {
+  animation-duration: 20s;
+}
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 26s linear infinite;
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(6deg);
+  }
+}
+
+/* Slider de LemonCoins */
+.lemon-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-lemon) 0%,
+    var(--color-lemon) var(--pct, 0%),
+    #2f2f2f var(--pct, 0%),
+    #2f2f2f 100%
+  );
+  border: 2px solid var(--color-ink);
+  outline: none;
+  cursor: pointer;
+}
+.lemon-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-cream);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0 0 0 6px rgba(226, 255, 0, 0.35);
+  cursor: grab;
+  transition: box-shadow 0.2s ease;
+}
+.lemon-range::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 10px rgba(226, 255, 0, 0.45);
+}
+.lemon-range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-cream);
+  border: 3px solid var(--color-ink);
+  cursor: grab;
+}
+.lemon-range::-moz-range-track {
+  height: 14px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink);
+  border: 2px solid var(--color-cream-deep);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-lemon);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* Accesibilidad: respeta el movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee,
+  .spin-slow,
+  .float-slow {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.btn-ghost:hover {
+  background: var(--color-lemon);
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+  box-shadow: 0 0 40px 0 rgba(226, 255, 0, 0.55);
+}
+
+/* Glassmorphism */
+.glass-dark {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.glass-light {
+  background: rgba(255, 251, 232, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(11, 11, 11, 0.1);
+}
+
+/* Tramas */
+.pattern-dots {
+  background-image: radial-gradient(rgba(11, 11, 11, 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.pattern-dots-dark {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Sombra dura estilo editorial */
+.shadow-hard {
+  box-shadow: 8px 8px 0 0 var(--color-ink);
+}
+.shadow-hard-lemon {
+  box-shadow: 8px 8px 0 0 var(--color-lemon);
+}
