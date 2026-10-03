@@ -9,6 +9,7 @@ import Tilt from "./ui/Tilt";
 import { setAtmo } from "../lib/atmo";
 import type { AtmoTone } from "../lib/atmo";
 import { cn } from "../lib/utils";
+import { useSpots } from "../lib/spotStore";
 
 const EventModal = lazy(() => import("./event-modal/EventModal"));
 const AccountModal = lazy(() => import("./AccountModal"));
@@ -55,7 +56,9 @@ const EventCard = memo(function EventCard({
   onOpen: (id: string) => void;
 }) {
   const featured = index === 0;
-  const urgent = event.spots <= 3;
+  const liveSpots = useSpots(event.id);
+  const urgent = liveSpots > 0 && liveSpots <= 3;
+  const soldOut = liveSpots === 0;
 
   return (
     <motion.button
@@ -151,10 +154,23 @@ const EventCard = memo(function EventCard({
           <span
             className={cn(
               "ml-auto inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[0.7rem] font-bold",
-              urgent ? "bg-blush text-ink" : "bg-mint text-ink"
+              soldOut
+                ? "bg-mint text-ink"
+                : urgent
+                  ? "bg-blush text-ink"
+                  : "bg-mint text-ink"
             )}
+            aria-live="polite"
           >
-            {event.spots} plazas
+            {soldOut ? (
+              <>
+                <span aria-hidden="true">⚡</span> 0 plazas · lista de espera
+              </>
+            ) : (
+              <>
+                {liveSpots} {liveSpots === 1 ? "plaza" : "plazas"}
+              </>
+            )}
           </span>
         </span>
 

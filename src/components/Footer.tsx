@@ -1,11 +1,12 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { AtSign, Camera, Check, Mail, MapPin, Send } from "lucide-react";
+import { AtSign, Camera, Check, Mail, MapPin, QrCode, Send } from "lucide-react";
 import { Reveal } from "./motion/Reveal";
 import Confetti from "./ui/Confetti";
 import { scrollToId } from "../lib/utils";
 import { openLegal } from "../lib/legalEvents";
+import { openStaffScanner } from "../lib/staffEvents";
 import type { LegalId } from "../data/legal";
 
 const LEGAL_LINKS: Array<{ id: LegalId; label: string }> = [
@@ -254,6 +255,12 @@ export default function Footer() {
             </button>
             <button onClick={() => openLegal("creditos")} className="transition hover:text-lemon">
               Créditos fotográficos
+            </button>
+            <button
+              onClick={() => openStaffScanner()}
+              className="inline-flex items-center gap-1 transition hover:text-lemon"
+            >
+              <QrCode className="h-3.5 w-3.5" aria-hidden="true" /> Acceso Staff / Validar QR
             </button>
             <button onClick={() => scrollToId("inicio")} className="transition hover:text-lemon">
               Volver arriba <span aria-hidden="true">↑</span>

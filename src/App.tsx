@@ -11,6 +11,7 @@ import CookieBanner from "./components/CookieBanner";
 import MemberCard from "./components/MemberCard";
 
 const LegalModal = lazy(() => import("./components/LegalModal"));
+const StaffScannerModal = lazy(() => import("./components/StaffScannerModal"));
 
 function LemonSkeleton() {
   return (
@@ -50,6 +51,9 @@ export default function App() {
       <CookieBanner />
       <Suspense fallback={<LemonSkeleton />}>
         <LegalModal />
+      </Suspense>
+      <Suspense fallback={null}>
+        <StaffScannerModal />
       </Suspense>
       {memberCode && <MemberCard code={memberCode} onClose={() => { window.location.hash = "#talleres"; }} />}
     </div>

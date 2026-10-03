@@ -4,7 +4,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { BookOpenText, Calendar, Check, Clock, MapPin, Star, Ticket, Users, X, UtensilsCrossed } from "lucide-react";
 import type { LemonEvent } from "../../data/events";
 import { galleryFor } from "../../data/galleries";
-import { addAttendance } from "../../lib/lemonStore";
+import { addAttendance, useLemonProfile } from "../../lib/lemonStore";
+import {
+  joinWaitlist,
+  reserveSpot,
+  useSpots,
+  useWaitlisted,
+  useWaitPosition,
+} from "../../lib/spotStore";
 import { useFocusTrap } from "../../lib/useFocusTrap";
 import Confetti from "../ui/Confetti";
 
@@ -18,11 +25,19 @@ interface Props {
 
 export default function EventModal({ event, onClose, onAccount }: Props) {
   const [reserved, setReserved] = useState(false);
+  const [joined, setJoined] = useState(false);
   const [burst, setBurst] = useState(0);
+  const profile = useLemonProfile();
+  const memberCode = profile?.memberCode ?? null;
+  const eventId = event?.id ?? "";
+  const liveSpots = useSpots(eventId);
+  const onWaitlist = useWaitlisted(eventId, memberCode);
+  const waitPos = useWaitPosition(eventId, memberCode);
 
   // Reinicia el estado cada vez que cambia el evento
   useEffect(() => {
     setReserved(false);
+    setJoined(false);
   }, [event?.id]);
 
   const panelRef = useFocusTrap(Boolean(event), onClose);
@@ -39,10 +54,21 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
 
   const reserve = () => {
     if (!event || reserved) return;
+    const ok = reserveSpot(event.id);
+    if (!ok) return; // se agotó entre render y click → la UI ya muestra lista de espera
     setReserved(true);
     setBurst((b) => b + 1);
     addAttendance({ eventId: event.id, title: event.title, date: event.date, coins: 10 });
   };
+
+  const joinWait = () => {
+    if (!event || joined || onWaitlist) return;
+    joinWaitlist(event.id, memberCode ?? "INVITADO");
+    setJoined(true);
+  };
+
+  const waiting = joined || onWaitlist;
+  const soldOut = liveSpots === 0;
 
   return (
     <>
@@ -113,6 +139,12 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
                         { icon: Clock, t: event.time },
                         { icon: MapPin, t: event.place },
                         { icon: Users, t: event.level },
+                        {
+                          icon: Ticket,
+                          t: soldOut
+                            ? "Sin plazas · lista de espera"
+                            : `${liveSpots} plazas libres`,
+                        },
                       ].map(({ icon: Icon, t }, i) => (
                         <span
                           key={i}
@@ -192,32 +224,87 @@ export default function EventModal({ event, onClose, onAccount }: Props) {
                       </div>
                     </div>
 
-                    {/* Reserva simulada */}
+                    {/* Reserva en tiempo real */}
                     <div className="flex flex-col gap-4 rounded-3xl border-2 border-ink bg-ink p-5 text-cream sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="flex flex-wrap items-center gap-2 text-sm text-cream/70">
                           <Ticket className="h-4 w-4 text-lemon" />
-                          {event.spots} plazas disponibles ·{" "}
-                          <strong className="text-lemon">{event.price}€</strong> · +10 LemonCoins
+                          {soldOut ? (
+                            <span aria-hidden="true">⚡</span>
+                          ) : null}
+                          <span aria-live="polite">
+                            {soldOut
+                              ? "Quedan 0 plazas disponibles"
+                              : `${liveSpots} ${liveSpots === 1 ? "plaza disponible" : "plazas disponibles"}`}
+                          </span>
+                          · <strong className="text-lemon">{event.price}€</strong> · +10 LemonCoins
                         </p>
                         <p className="mt-1 text-xs text-cream/50">
                           Cancelación gratuita hasta 48 h antes.
                         </p>
                       </div>
-                      <button
-                        onClick={reserve}
-                        disabled={reserved}
-                        className="btn btn-lemon w-full shrink-0 disabled:cursor-not-allowed disabled:bg-mint sm:w-auto"
-                      >
-                        {reserved ? (
-                          <>
-                            <Check className="h-4 w-4" strokeWidth={3} /> Plaza reservada
-                          </>
-                        ) : (
-                          "Reservar mi plaza"
-                        )}
-                      </button>
+                      {!soldOut ? (
+                        <button
+                          onClick={reserve}
+                          disabled={reserved}
+                          className="btn btn-lemon w-full shrink-0 disabled:cursor-not-allowed disabled:bg-mint sm:w-auto"
+                        >
+                          {reserved ? (
+                            <>
+                              <Check className="h-4 w-4" strokeWidth={3} /> Plaza reservada
+                            </>
+                          ) : (
+                            "Reservar mi plaza"
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={joinWait}
+                          disabled={waiting}
+                          className="btn w-full shrink-0 border-2 border-ink bg-mint text-ink shadow-hard disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto"
+                        >
+                          {waiting ? (
+                            <>
+                              <Check className="h-4 w-4" strokeWidth={3} /> Estás en la lista
+                            </>
+                          ) : (
+                            "Unirme a la lista de espera"
+                          )}
+                        </button>
+                      )}
                     </div>
+
+                    {soldOut && !waiting && (
+                      <motion.p
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        role="status"
+                        className="rounded-2xl border-2 border-ink bg-mint px-4 py-3 text-center text-sm font-bold text-ink"
+                      >
+                        <span aria-hidden="true">⚡</span> Quedan 0 plazas disponibles · únete a
+                        la lista de espera
+                      </motion.p>
+                    )}
+
+                    {waiting && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        role="status"
+                        className="rounded-2xl border-2 border-dashed border-ink/40 bg-mint/60 p-4 text-center"
+                      >
+                        <p className="text-sm font-semibold text-ink">
+                          ¡Estás en cabeza{waitPos > 0 ? ` (posición ${waitPos})` : ""}! Te
+                          avisaremos por email en cuanto se libere una plaza para este miércoles.
+                        </p>
+                        <button
+                          onClick={onAccount}
+                          className="mt-2 text-sm font-bold text-ink underline decoration-dotted underline-offset-4 hover:text-ink/70"
+                        >
+                          Ver mi Lemon Account →
+                        </button>
+                      </motion.div>
+                    )}
 
                     {reserved && (
                       <motion.div
